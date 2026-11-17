@@ -11,6 +11,18 @@ training data, and where the project currently stands. I'm sharing it mainly to
 show *how* I approach an open-ended robotics/RL problem, not to claim a finished
 robot.
 
+## Where this came from
+
+This project grew out of a long-standing interest in robotics, combined with
+years of hands-on 3D-printing and mechanical prototyping experience — I wanted
+to actually build a physical robot, not just simulate one. I also didn't want
+to build *just another* gait-walking robot: the part that actually interested
+me was a robot that can sense an obstacle in its path and step over or around
+it on its own, instead of blindly walking into it. That's why obstacle
+perception (the ToF sensor, the vision branch discussed below) is part of the
+plan from the start, even though it's currently parked while the core walking
+gait gets solid first.
+
 ## The goal
 
 A real 8-legged robot (24 joints, 3 per leg: hip / knee / ankle), controlled by
