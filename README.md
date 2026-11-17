@@ -11,6 +11,19 @@ training data, and where the project currently stands. I'm sharing it mainly to
 show *how* I approach an open-ended robotics/RL problem, not to claim a finished
 robot.
 
+## Contents
+
+- [Where this came from](#where-this-came-from)
+- [The goal](#the-goal)
+- [Starting broad, then deliberately cutting scope](#starting-broad-then-deliberately-cutting-scope)
+- [Reward engineering as an empirical process](#reward-engineering-as-an-empirical-process)
+- [Trying a second action space in parallel](#trying-a-second-action-space-in-parallel)
+- [Training footage](#training-footage)
+- [Current status](#current-status)
+- [What's next](#whats-next)
+- [Why no code here](#why-no-code-here)
+- [Stack](#stack)
+
 ## Where this came from
 
 This project grew out of a long-standing interest in robotics, combined with
@@ -75,8 +88,11 @@ when perception comes back into scope.*
 Getting a legged robot to produce a clean walking gait from RL is mostly a
 reward-shaping problem, and it very rarely goes right on the first attempt. The
 project tracks every round of this in a repo-local experiment log (not included
-here), each entry following the same shape: what changed, why, and what the
-actual training run showed — including the failures.
+here) — 23 rounds and counting — each entry following the same shape: what
+changed, why, and what the actual training run showed, including the failures.
+Every reward term is also a small, pure, independently unit-tested function
+(close to 100 tests at this point) with no direct simulator access, so a change
+to one term's math can't silently change another's.
 
 A few examples of what that process actually surfaced:
 
@@ -103,11 +119,10 @@ A few examples of what that process actually surfaced:
   genuinely improving policy look like it was regressing. Fixed by normalizing
   against elapsed episode time instead of absolute seconds.
 
-Every reward term has its own unit test (pure functions, no simulator state), so
-a change to one term's math can't silently change another's. That still didn't
-catch the bugs above — they were about reward *incentives*, not reward *code*ending
-up wrong, which is exactly why actually watching training footage stayed in the
-loop rather than trusting metrics alone.
+None of that test coverage caught the bugs above, though — they were about
+reward *incentives* lining up wrong, not reward *code* being wrong, which is
+exactly why actually watching rendered training footage stayed in the loop
+rather than trusting metrics and tests alone.
 
 ## Trying a second action space in parallel
 
@@ -149,6 +164,30 @@ No physical hardware has been built yet — the project is currently
 simulation-only, with the real-hardware constraints (servo dynamics, sensor
 placement, compute budget) actively shaping decisions along the way rather than
 left for later.
+
+## What's next
+
+Roughly in order:
+
+1. Converge the flat-ground joint-space gait (ongoing reward tuning).
+2. Compare it empirically against the IK-based action space, rather than
+   assuming either is better upfront.
+3. Layer directional velocity tracking on top of whichever baseline wins
+   (the curriculum's Phase 2).
+4. Bring the parked raycaster/ToF perception branch back in, now with a
+   working locomotion baseline to build on top of instead of debugging both
+   at once.
+5. Add domain randomization (mass, friction, actuator/sensor noise, latency)
+   once there's a trained policy worth transferring, and start the physical
+   build.
+
+## Why no code here
+
+This repo is intentionally a write-up, not the training codebase. The code
+itself is mid-experiment (reward scales get tuned by hand, branches get
+parked and revisited) and wouldn't read as a clean example of anything on its
+own without the process notes above to go with it — so I'd rather share the
+reasoning directly than a half-finished `env_cfg.py`.
 
 ## Stack
 
